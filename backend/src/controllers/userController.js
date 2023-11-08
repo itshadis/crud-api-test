@@ -1,4 +1,4 @@
-const { create, getAll, getOne, remove } = require("../models/userModel");
+const { create, getAll, getOne, remove, update } = require("../models/userModel");
 
 const getDataUser = async (req, res) => {
   try {
@@ -36,10 +36,34 @@ const getOneUser = async (req, res) => {
 const setDataUser = async (req, res) => {
   try {
     const { userid, namalengkap, username, password, status } = req.body;
+
+    if(!userid || !namalengkap || !username || !password || !status) {
+      return res.status(400).send({
+        message: "some field must be filled, cannot be empty"
+      })
+    }
+
     await create(userid, namalengkap, username, password, status);
 
     res.status(201).send({
       message: "create user success",
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: 'server error',
+      serverMessage: error.message
+    })
+  }
+}
+
+const upDataUser = async (req, res) => {
+  try {
+    const { userid, namalengkap, username, password, status } = req.body;
+
+    await update(userid, namalengkap, username, password, status);
+
+    res.status(201).send({
+      message: "update user success",
     });
   } catch (error) {
     res.status(500).send({
@@ -65,4 +89,4 @@ const delDataUser = async (req, res) => {
   }
 }
 
-module.exports = { getDataUser, setDataUser, getOneUser, delDataUser }
+module.exports = { getDataUser, setDataUser, getOneUser, upDataUser, delDataUser }

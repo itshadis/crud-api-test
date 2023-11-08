@@ -1,16 +1,16 @@
 import axios from "axios";
+import Swal from "sweetalert2";
 import { Table } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import Swal from "sweetalert2";
 
 // eslint-disable-next-line react/prop-types
-const TableUser = ({change}) => {
+const TableUser = ({change, update, setIsDetail, setUserId}) => {
   const [users, setUsers] = useState();
 
   useEffect(() => {
     getUsers();
 
-  }, [change]);
+  }, [change,update]);
 
   const getUsers = async () => {
     const data = await axios.get('http://localhost:3003/api/user/all');
@@ -42,12 +42,20 @@ const TableUser = ({change}) => {
     });
   } 
 
+  const handleDetail = (e) => {
+    e.preventDefault();
+
+    setUserId(e.target.value)
+    setIsDetail(true);
+  }
+
   return (
     <Table>
       <Table.Head>
         <Table.HeadCell>No</Table.HeadCell>
         <Table.HeadCell>Nama Lengkap</Table.HeadCell>
         <Table.HeadCell>Username</Table.HeadCell>
+        <Table.HeadCell>Password</Table.HeadCell>
         <Table.HeadCell>Status</Table.HeadCell>
         <Table.HeadCell>Aksi</Table.HeadCell>
       </Table.Head>
@@ -60,9 +68,10 @@ const TableUser = ({change}) => {
             </Table.Cell>
             <Table.Cell>{user.namalengkap}</Table.Cell>
             <Table.Cell>{user.username}</Table.Cell>
+            <Table.Cell>{user.password}</Table.Cell>
             <Table.Cell>{user.status}</Table.Cell>
             <Table.Cell className="flex gap-2">
-              <button className="h-8 px-3 text-white rounded  bg-emerald-500">Detail</button>
+              <button onClick={handleDetail} className="h-8 px-3 text-white rounded bg-emerald-500" value={user.userid}>Detail</button>
               <button onClick={handleDelete} className="h-8 px-3 text-white rounded  bg-red-600" value={user.userid}>Hapus</button>
             </Table.Cell>
           </Table.Row>
